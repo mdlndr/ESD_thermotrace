@@ -1,0 +1,197 @@
+<h1><strong>What is ESD_thermotrace?</strong></h1>
+
+<p>A <a href="https://jupyter.org/" rel="nofollow">jupyter notebook</a> that helps interpreting detrital tracer thermochronometry datasets and quantifying the statistical confidence of such analysis. it has been developed by A. Madella in the <a href="https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/geowissenschaften/arbeitsgruppen/mineralogie-geodynamik/forschungsbereich/geologie/earth-system-dynamics-research-group/" rel="nofollow">Earth Surface Dynamics group of the University of Tuebingen</a>. The code was last updated in February 2021.</p>
+
+<h1><strong>Ok, great, but what <em>exactly</em> does it do?</strong></h1>
+
+<p>The files in this folder having <em>.ipynb</em> and <em>.py</em> extensions host all the code. There, a detailed description of all the new routines can be found, as well as references to the used Python libraries. In addition, it is recommended reading the manuscript where ESD_thermotrace is presented and described in better context and detail.
+The workflow of ESD_thermotrace is briefly summarized here below. For each main step, we specify inputs, outputs and methods.</p>
+
+<p><strong>1) Bedrock age map interpolation</strong></p>
+
+<p><em>Input</em></p>
+
+<ul>
+<li>Bedrock age dataset (table data)</li>
+<li>Digital elevation model of the studied catchment (grid data)</li>
+<li>Cellsize (user-defined resolution of the age map)</li>
+</ul>
+
+<p><em>Output</em></p>
+
+<ul>
+<li>Bedrock age map (grid data)</li>
+</ul>
+
+<p><em>Method</em></p>
+
+<p>In this step a bedrock age map is computed, such that differences to the observed dataset are minimized. Here, users can choose among the following methods:</p>
+
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html" rel="nofollow">1D linear regression</a> (bedrock age variance is explained only by changes in elevation)</li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.Rbf.html#scipy.interpolate.Rbf" rel="nofollow">3D linear Radial Basis Function</a> (bedrock age variance is explained by changes in X, Y, Z coordinates)</li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata" rel="nofollow">3D linear interpolation</a> (bedrock age variance is explained by changes in X, Y, Z coordinates)
+Alternatively, users can import their own age and age-uncertainty map.</li>
+</ul>
+
+<p><strong>2) Bedrock age uncertainty map interpolation</strong></p>
+
+<p><em>Input</em></p>
+
+<ul>
+<li>Bedrock age dataset (table)</li>
+<li>Bedrock age map (grid data)</li>
+</ul>
+
+<p><em>Output</em></p>
+
+<ul>
+<li>Bedrock age uncertainty map</li>
+</ul>
+
+<p><em>Method</em></p>
+
+<p>The uncertainty of the age map is estimated through bootstrapping. This means that the age map is iteratively recalculated as many times as the measured bedrock ages. For each iteration i, one age A<sub>i</sub> is excluded from the input. The difference between the excluded age A<sub>i</sub> and the interpolated age is taken as the age error E<sub>i</sub> at the coordinates X<sub>A<sub>i</sub></sub>, Y<sub>A<sub>i</sub></sub>. Where the age analytical error is larger than the interpolation error, E<sub>i</sub> will equal the root of the sum of the squared errors. The age uncertainty map is then interpolated from all the local errors E<sub>i</sub>.
+Alternatively, If users opted to import their own age map, a related age uncertainty map is required too.</p>
+
+<p><strong>3) Extract catchment bedrock age, coordinates and erosion data</strong></p>
+
+<p><em>Input</em></p>
+
+<ul>
+<li>Outline of the catchment (shapefile)</li>
+<li>Bedrock age and age uncertainty maps (grids)</li>
+<li>Mineral fertility map (grid, optional)</li>
+<li>Erosion scenarios (grid data and/or functions of X,Y,Z written in Python)</li>
+</ul>
+
+<p><em>Output</em></p>
+
+<p>A table of catchment data with one row per catchment cell and the following columns:</p>
+
+<ul>
+<li>coordinates X, Y, Z</li>
+<li>age and age uncertainty</li>
+<li>Mineral fertility</li>
+<li>one column per erosion scenario, each informing the local erosional weight.</li>
+</ul>
+
+<p><em>Method</em></p>
+
+<p>The data listed just above is saved into an excel table for each cell that falls within the imported catchment outline. A column for uniform erosion scenario &#34;Euni&#34; is included by default.</p>
+
+<p><strong>4) Predict detrital grain age distributions for each erosion scenario</strong></p>
+
+<p><em>Input</em></p>
+
+<ul>
+<li>Extracted table of catchment data</li>
+</ul>
+
+<p><em>Output</em></p>
+
+<ul>
+<li>A predicted detrital age population per erosion scenario, having n&gt;&gt;1000</li>
+<li>A predicted detrital age distribution for each of the populations</li>
+</ul>
+
+<p><em>Method</em></p>
+
+<p>Age populations are predicted as follows: for each scenario, a number of ages is drawn from a normal distribution in each cell. This normal age distribution is constructed from the local age and age uncertainty. The drawn number of grain ages is the product of the local mineral fertility, the erosional weight and an arbitrary multiplier (user-defined and constant for all cells).  For each age population, the related cumulative age distribution is constructed.</p>
+
+<p><strong>5) Evaluate the confidence of detecting erosion scenarios from a set of measured detrital ages</strong></p>
+
+<p><em>Input</em></p>
+
+<ul>
+<li>One or more sets of measured detrital grain ages and related analytical uncertainty (table)</li>
+<li>Predicted detrital populations and distributions (stored in a Python dictionary)</li>
+</ul>
+
+<p><em>Output</em></p>
+
+<ul>
+<li>A graph informing the statistical confidence of discerning between erosion scenarios and uniform erosion &#34;Euni&#34;, as a function of the number of observed grain ages (editable .pdf file)</li>
+</ul>
+
+<p><em>Method</em></p>
+
+<p>Firstly, the dissimilarity between a n=k subsample of &#34;Euni&#34; and n&gt;&gt;k &#34;Euni&#34; is estimated with a Monte Carlo simulation for a range of sample sizes k (30&gt;k &#34;Euni&#34; and a n=k subsampled distribution of a predicted erosion scenario is estimated in the same manner. In all cases the KS (Kolmogorov-Smirnov) statistic is used as metric of dissimilarity between distributions. If the first dissimilarity is lesser than the second one, the two scenarios are considered statistically dissimilar. The success rate for each erosion scenario is plotted against the range of sample sizes k.
+
+<p><strong>6) Evaluate the fit of the erosion scenarios to the observed detrital ages</strong></p>
+
+<p><em>Input</em></p>
+
+<ul>
+<li>One or more sets of measured detrital grain ages and related analytical uncertainty (table)</li>
+<li>Predicted detrital populations and distributions (stored in a Python dictionary)</li>
+</ul>
+
+<p><em>Output</em></p>
+
+<ul>
+<li>A violin plot informing the distribution of dissimilarities between the erosion scenarios and the observed data (editable .pdf file)</li>
+<li>A Multidimensional scaling (MDS) plot, informing the degree of overlap among the scenario distributions and the observed detrital age distribution (editable .pdf file)</li>
+</ul>
+
+<p><em>Method</em></p>
+
+<p>The dissimilarity between the observed cumulative age distribution (from k grain ages) and a n=k subset of each predicted detrital distribution is calculated 10000 times. Then, the distribution of these dissimilarities are plotted in the form of a violin plot. The degree of overlap among these distributions is also informed.
+The MDS plot is constructed following the approach described by <a href="https://www.sciencedirect.com/science/article/abs/pii/S0009254113000387" rel="nofollow">Vermeesch (2013)</a></p>
+
+<h1><strong>Installation</strong></h1>
+
+<p>Perhaps you already have a Python 3 installation with jupyter,
+but ESD_thermotrace might use some libraries you still have not installed.
+To ensure a painless installation and usage, this is the way to go:</p>
+
+<p>Make sure you have an Anaconda installation with Python 3. If not, <a href="https://docs.anaconda.com/anaconda/install/" rel="nofollow">follow these instructions</a></p>
+
+<p>Then Clone or download this repository to your preferred directory.</p>
+
+<p>Open a terminal (MacOS, Linux) or Anaconda-Prompt window (Windows).</p>
+
+<p>Go to the downloaded <em>esd_thermotrace</em> directory.</p>
+
+<p>Create a new environment from the provided .yml file by entering the following command:</p>
+
+<pre><code>conda env create -f ESD_thermotrace_environment.yml
+</code></pre>
+
+<p>Activate the environment like so</p>
+
+<pre><code>source activate ESD_thermotrace
+</code></pre>
+
+<p>or (depending on Anaconda version and operating system)</p>
+
+<pre><code>conda activate ESD_thermotrace
+</code></pre>
+
+<p>Launch jupyter</p>
+
+<pre><code>jupyter notebook
+</code></pre>
+
+<p>Open the notebook <em>ESD_thermotrace.ipynb</em> in the browser window, you&#39;re good to go!</p>
+
+<p>Press <strong>SHIFT+ENTER</strong> to run the current cell</p>
+
+<p>To close the program, enter CTRL+C in the terminal, or click the Quit button in the home page of the User Interface.</p>
+
+<p>Please refer to the <a href="https://jupyter-notebook.readthedocs.io/en/stable/" rel="nofollow">jupyter documentation</a> for all other questions on how to use notebooks.</p>
+
+<p>To return to the base Anaconda environment, enter the activation command without specifying the env. name:</p>
+
+<pre><code>source activate
+</code></pre>
+
+<p>or</p>
+
+<pre><code>conda activate
+</code></pre>
+
+
+		</div>
+	</div>
+</div>

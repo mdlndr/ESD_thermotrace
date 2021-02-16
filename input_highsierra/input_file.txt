@@ -1,0 +1,112 @@
+############### DIRECTORIES AND PATHS ###############
+
+1 input_folder: input_highsierra
+
+2 output_folder: output_highsierra
+
+3 dem_filename: dem_highsierra.asc
+
+4 erosion_map_filenames:
+
+5 fertility_map_filename:
+
+6 watershed_outline_filename: inyo_ws.shp
+
+7 bedrock_ages_filename: bd_highsierra.xlsx
+
+8 detrital_ages_filenames: dd_inyo_fine.xlsx
+
+
+############### OTHER PARAMETERS AND OPTIONS ###############
+
+9 resolution: 30
+
+10 example_scenarios: False
+
+11 interpolation_method: zln
+
+12 extrapolation_radius:
+
+13 age_map_filename:
+
+14 age_map_uncertainty_filename:
+
+
+
+
+############### INSTRUCTIONS ###############
+
+# 1. this is the directory on your computer where all the input files are located
+
+# 2. this is the folder in which all outputs will be written, it may or may not already exist 
+
+# 3. this is the digital elevation model of your study area.
+# Accepted extensions are .txt or .asc
+# e.g. ASCII file exported from QGIS with the gdal_translate function
+# Best resampled to a reasonably low resolution before importing it.
+# If not, computational time increases
+# The Input Coordinate Reference System must be WGS1984
+# Make sure that the first 6 rows of the .asc or .txt file are the following:
+# ncols
+# nrows
+# xllcorner
+# yllcorner
+# cellsize
+# NODATA_value
+
+# 4. One or more erosional map filenames, separated by a space.
+# These are rasters, where each cell informs the local erosional weight.
+# Please avoid including areas with zero erosion.
+# Extremely low erosion rates should be assigned a value orders of magnitude lower than the other ones.
+# Accepted coordinate reference system and format, same as 3.
+# This parameter can also be left empty.
+
+# 5. Filename of the bedrock mineral fertility map of the study area.
+# This is a raster, where each cell informs a local weight of mineral fertility.
+# Accepted coordinate reference system and format, same as 4. and 3.
+# This parameter can also be left empty
+
+# 6. Filename of the watershed outline with .shp extension (Shapefile)
+# The input folder should also contain a .shx file with the same name,
+# This is automatically created during shapefile export from any GIS software
+# If zero erosion areas are desired, the watershed polygon shouldexclude these
+
+# 7. Input bedrock ages filename, as .xlsx or .csv format
+# This should be a table with the following header:
+# latitude, longitude, elevation, age, age_u, zero_age_depth
+# age and age_u: the age and related uncertainty in million years
+# zero_age_depth: the depth at which the thermochronometric ages are reset.
+# this latter column can be blank, in which case the depth is assigned to be elevation-5000 m
+# coordinates must be WGS1984 values
+# elevation and zero_age_depth are in meters above sea level
+
+# 8. One or more detrital grain-age populations, .xlsx or .csv format, separated by a space
+# These should have at least 2 columns labeled age and age_u
+# Any other column will be ignored
+# This parameter can also be left empty in case of exploratory runs
+
+# 9. This is the target resolution of the interpolated surface in meters
+
+# 10. If true, 2 example erosion scenarios will be tested
+# these are:
+# i) exponential increase with elevation
+# ii) exponential decrease with elevation
+# additional scenarios other than the imported maps can be added by editing the code in the jupyter notebook.
+
+# 11. This indicates the interpolation method to be used, options are:
+# rbf - linear Radial Basis Function
+# https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.Rbf.html#scipy.interpolate.Rbf
+# int - 3D linear interpolation
+# https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.griddata.html#scipy.interpolate.griddata
+# ext - same as int, but additionally extrapolates ages outside of the convex interpolation hull
+# zln - each z gets assigned an age based on a linear regression of age-elevation data.
+# imp - import your own age map and uncertainty (ASCII files referenced in WGS1984, same as 3.)
+
+# 12. If ext is chosen as interpolation method, an inverse-distance-weight is used to assign ages
+# to the cells out of the interpolation hull, but not farther than this search radius, expressed in meters.
+# This parameter can also be left empty
+
+# 13/14. If imp is chosen as interpolation method, these indicate the filenames of
+# the interpolated surface bedrock age map and the related uncertainty in %
+# both must be ASCII files referenced in WGS1984, like 3.
+# These parameters can also be left empty

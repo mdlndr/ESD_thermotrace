@@ -1,0 +1,6 @@
+*.DS_Store
+*._*
+*.Trashes
+.ipynb_checkpoints
+*.profraw
+__pycache__
