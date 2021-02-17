@@ -3,6 +3,10 @@
 A [jupyter notebook](https://jupyter.org/) that helps interpreting detrital tracer thermochronometry datasets and quantifying the statistical confidence of such analysis. it has been developed by A. Madella in the [Earth Surface Dynamics group of the University of Tübingen](https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/geowissenschaften/arbeitsgruppen/mineralogie-geodynamik/forschungsbereich/geologie/earth-system-dynamics-research-group/).
 The code was last updated in February 2021.
 
+How to cite ESD_thermotrace:
+
+Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A new software to interpret tracer thermochronometry datasets and quantify related confidence levels. V. 1.0. GFZ Data Services. https://doi.org/10.5880/fidgeo.2021.003
+
 
 # **Ok, great, but what *exactly* does it do?**
 
