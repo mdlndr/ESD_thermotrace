@@ -164,4 +164,3 @@ or
 ```
 conda activate
 ```
-# ESD_thermotrace
