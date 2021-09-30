@@ -64,7 +64,7 @@ A table of catchment data with one row per catchment cell and the following colu
 
 *Method*
 
-The data listed just above is saved into an excel table for each cell that falls within the imported catchment outline. A column for uniform erosion scenario "Euni" is included by default. 
+The data listed just above is saved into an excel table for each cell that falls within the imported catchment outline. A column for uniform erosion scenario "Euni" is included by default.
 
 **4) Predict detrital grain age distributions for each erosion scenario**
 
@@ -81,7 +81,7 @@ The data listed just above is saved into an excel table for each cell that falls
 
 Age populations are predicted as follows: for each scenario, a number of ages is drawn from a normal distribution in each cell. This normal age distribution is constructed from the local mean age and age uncertainty. The drawn number of grain ages is the product of the local mineral fertility, the erosional weight and an arbitrary multiplier (user-defined and constant for all cells).  For each predicted population, ages are sorted to construct the related cumulative age distribution.
 
-**5) (a) Evaluate the confidence of rejecting the uniform erosion scenario (*Euni*) based on the available grain-ages; (b) study the statistical power of discerning each imported erosion scenario from *Euni* **
+**5) (a) Evaluate the confidence of rejecting the uniform erosion scenario (*Euni*) based on the available grain-ages; (b) study the statistical power of discerning each imported erosion scenario from *Euni*.**
 
 *Input*
 
@@ -94,9 +94,9 @@ Age populations are predicted as follows: for each scenario, a number of ages is
 
 *Method*
 
-First, the least significant dissimilarity *Dcrit* for the available sample size *k* is calculated analitically with Equation 3 of the manuscript. Then, a large number of n=*k* distributions are drawn from the pool of observed grain-ages (applying the mean analytical uncertainty to all ages). The fraction of distributions that is more dissimilar to *Euni* than *Dcrit* represents the confidence level allowed by the sample size.
-The same operation is also repeated for a range of sample sizes (20<*k*<130), in order to estimate how the confidence level would benefit from an increase in sample size (if the observed distribution and associated uncertainty remained identical despite the changing sample saize).
-To calculate the statistical confidence of discerning the tested erosion hypotheses, the same approach is applied. In this case, however, the software draws a number of distributions from each erosion scenario, instead of from the observed grain-ages.
+First, the least significant dissimilarity *Dcrit* for the available sample size *k* is calculated analytically with Equation 3 of the manuscript. Then, a large number of n=*k* distributions are drawn from the pool of observed grain-ages (applying the mean analytical uncertainty to all ages). The fraction of distributions that is more dissimilar to *Euni* than *Dcrit* represents the confidence level allowed by the sample size.
+The same operation is also repeated for a range of sample sizes (20<*k*<130), in order to estimate how the confidence level would benefit from an increase in sample size (if the observed distribution and associated uncertainty remained identical despite the changing sample size).
+To calculate the statistical power of discerning the tested erosion hypotheses, the same approach is applied. In this case, however, the software draws a number of distributions from each erosion scenario, instead of from the observed grain-ages.
 
 **6) Evaluate which of the erosion scenarios produces distributions that are least dissimilar to the observed detrital distribution**
 
