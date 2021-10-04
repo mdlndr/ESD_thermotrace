@@ -1,7 +1,11 @@
+# **ESD_thermotrace 1.0**
+
+Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A new software to interpret tracer thermochronometry datasets and quantify related confidence levels. V. 1.0. GFZ Data Services. https://doi.org/10.5880/fidgeo.2021.003
+
 # **What is ESD_thermotrace?**
 
 A [jupyter notebook](https://jupyter.org/) that helps interpreting detrital tracer thermochronometry datasets and quantifying the statistical confidence of such analysis. it has been developed by A. Madella in the [Earth Surface Dynamics group of the University of Tübingen](https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/geowissenschaften/arbeitsgruppen/mineralogie-geodynamik/forschungsbereich/geologie/earth-system-dynamics-research-group/).
-The code was last updated in September 2021.
+This is version 1.0 of the code and it was last updated in September 2021.
 
 
 # **Ok, great, but what *exactly* does it do?**
@@ -132,7 +136,7 @@ Go to the downloaded *esd_thermotrace* directory.
 
 Create a new environment from the provided .yml file by entering the following command:
 ```
-conda env create -f ESD_thermotrace_environment.yml
+conda env create -f ESD_thermotrace_1_environment.yml
 ```
 Activate the environment like so
 ```
@@ -146,7 +150,7 @@ Launch jupyter
 ```
 jupyter notebook
 ```
-Open the notebook *ESD_thermotrace.ipynb* in the browser window, you're good to go!
+Open the notebook *ESD_thermotrace_1.ipynb* in the browser window, you're good to go!
 
 Press **SHIFT+ENTER** to run the current cell
 
