@@ -1,6 +1,6 @@
 '''
 This file contains all the functions and library import commands needed to run the ESD_thermotrace software
-Last edited by A. Madella in September 2021
+Last edited by A. Madella in February 2022
 '''
 
 import numpy as np                                                    # library for arrays
@@ -15,7 +15,6 @@ import seaborn as sns                                                 # pretty s
 import scipy.interpolate as intr                                      # interpolation functions
 from sklearn.linear_model import LinearRegression                     # linear regression function
 import statsmodels.api as sm                                          # package for WLS linear regression
-from statsmodels.sandbox.regression.predstd import wls_prediction_std # function to get confidence intervals of regression
 import utm                                                            # conversion from and to UTM coordinates
 from os import mkdir, path                                            # operating system utilities
 from sklearn.manifold import MDS                                      # multi dimensional scaling package
@@ -207,7 +206,7 @@ class DEM:
 
 def import_dem(dem_filename, ipf):
     '''
-    imports a ASCII raster and makes a DEM class instance out if 
+    imports a ASCII raster and makes a DEM class instance out if
     '''
     try:
         key = dem_filename[:dem_filename.find('.')]
@@ -399,7 +398,7 @@ def extrapolation(gdop, gdopx, gdopy, gdopz, data, datax, datay, dataz, ext_rad)
     '''
     Extrapolates data within wanted radius
     using an inverse distance weighted linear regression of the available data points
-    returns the input grid, in which extrapolated values have been assigned to cells within the extrapolation radius. 
+    returns the input grid, in which extrapolated values have been assigned to cells within the extrapolation radius.
     
     gdop: griddata output,
           a 1D-array that contains the interpolated data
@@ -575,7 +574,7 @@ def make_errormap(dem, res, z, a, u, aa, xx_utm, yy_utm, zz, x_utm, y_utm, inter
 
 def make_errormap_zln(dem, z, reg0, Alpha=0.32):
     '''
-    for the method 'zln', it gets the linear regression error from the reg0 WLS model
+    for the interpolation method 'zln', it gets the linear regression error from the reg0 WLS model
     and assigns each elevation the corresponding error.
     
     dem - instance of the class DEM, the imported digital elevation model
@@ -583,12 +582,12 @@ def make_errormap_zln(dem, z, reg0, Alpha=0.32):
     reg0 - fitted WLS model (inverse variance weighted linear regression)
     Alpha - 1-Alpha = desired confidence level, 1 sigma by default
     '''
-    
-    a_lower = wls_prediction_std(reg0, alpha=Alpha)[1] # get arrays of upper and lower envelope at 1-Alpha confidence
-    a_upper = wls_prediction_std(reg0, alpha=Alpha)[2]
-    error_interp = (a_upper-a_lower)/2
-    error_total = error_interp # total error is the same, because x,y components don't matter in this method
-    age_interp_error = np.interp(dem.zi_res_1d, z, error_total)
+    # get summary table of regression,
+    # to access lower and upper bounds of prediction interval at 1-Alpha confidence
+    pred_table = reg0.get_prediction().summary_frame(Alpha)
+    error_interp = (pred_table.obs_ci_upper - pred_table.obs_ci_lower)/2
+    # the total error is the same, because x,y components don't matter in this method, no need to bootstrap here
+    age_interp_error = np.interp(dem.zi_res_1d, z, error_interp)
     age_interp_error_map = age_interp_error.reshape(dem.zi_res.shape)
     return error_interp, age_interp_error_map
 
@@ -596,7 +595,7 @@ def make_errormap_zln(dem, z, reg0, Alpha=0.32):
 
 def plot_linreg(R2, reg0, z, a, u, error_interp, saveas, Alpha=0.32):
     '''
-    plots the linear regression used in case of import_method 'zln'
+    plots the linear regression used in case of interpolation method 'zln'
     R2 - coefficient of regression
     reg0 - fitted WLS model (inverse variance weighted linear regression)
     z - array of elevations from bedrock data
@@ -604,19 +603,20 @@ def plot_linreg(R2, reg0, z, a, u, error_interp, saveas, Alpha=0.32):
     u - array of age uncertainties from bedrock data
     error_interp - array of interpolation error, one element per bedrock data point
     saveas - path to filename to save the figure
-    Alpha - 1-Alpha = desired confidence level, 1 sigma by default
+    Alpha - 1-Alpha = desired confidence level, 1 sigma (68%) by default
     '''
     if R2 < 0.7:
         warnings.warn('The scatter of your age-elevation data is rather high (R^2 = '+str(R2)+')\nYou might want to use a different interpolation method')
-    fig,ax = plt.subplots(1,1,figsize=(10,6))    
-    a_new = reg0.params[0]+reg0.params[1]*z
-    ax.fill_between(x=z, y1=wls_prediction_std(reg0, alpha=Alpha)[1], y2=wls_prediction_std(reg0, alpha=Alpha)[2],
-                    color='k', alpha=0.3, label='{}% confidence'.format((1-Alpha)*100))
-    ax.plot(z, a_new, label='_nolegend_')
+    fig,ax = plt.subplots(1,1,figsize=(10,6))
+    # get summary table of regression to access lower and upper bounds
+    # of prediction interval at 1-Alpha confidence
+    pred_table = reg0.get_prediction().summary_frame(Alpha)
+    ax.fill_between(x=z, y1=pred_table.obs_ci_lower, y2=pred_table.obs_ci_upper, color='k', alpha=0.3, label='{}% confidence'.format((1-Alpha)*100))
+    ax.plot(z, reg0.fittedvalues, label='_nolegend_')
     ax.errorbar(z, a, yerr=u, fmt='ok', label='_nolegend_')
     ax.set(xlabel='elevation [m]', ylabel='age [My]')
     ax.set_title('Linear regression of bedrock age-elevation, r^2 = '+str(R2), pad=10, fontdict=dict(weight='bold'))
-    ax.legend()
+    ax.legend(loc='best')
     fig.savefig(saveas, dpi=200) # save fig
 
 ############################################################################################################
@@ -751,7 +751,7 @@ def make_watershed_table(dflt_grids, dflt_labels, e_maps, e_maps_res_clp, exampl
     e_maps: dictionary of imported erosional maps
     e_maps_res_clp: dictionary of clipped erosional maps
     example_scenarios: flag to activate default example scenarios
-    '''  
+    '''
     # add labels and grids of the imported erosion maps and fertility
     if len(e_maps)>0:
         for key,item in e_maps_res_clp.items():
@@ -762,7 +762,7 @@ def make_watershed_table(dflt_grids, dflt_labels, e_maps, e_maps_res_clp, exampl
     Ncells = dflt_grids[0][dflt_grids[0]==dflt_grids[0]].size
     for g,l in zip(dflt_grids, dflt_labels):
         if g[g==g].size != Ncells: # check if nodata cells were involved
-            warnings.warn('\nThe number of no-data cells in the '+l+' raster must match that of the clipped DEM\nPlease, make sure that the watershed polygon does not contain no-data.')         
+            warnings.warn('\nThe number of no-data cells in the '+l+' raster must match that of the clipped DEM\nPlease, make sure that the watershed polygon does not contain no-data.')
         ws_data[l] = g[g==g] # drop the nans and reshape to 1D-array
 
     if len(e_maps)>0: # if present, recalculate erosional weights, such that the minimum possible erosion equals 1
@@ -816,7 +816,7 @@ def make_pops_dict(ws_data_filename, f_map_filename, multiplier):
         pops[scen] = np.array([])
         for A,U,N in zip(ws_data.age, ws_data['age_u'], ws_data['N_'+scen]):
             pops[scen] = np.append(pops[scen], np.random.normal(A,np.abs(U),int(N)))
-    return pops, scen_labels
+    return pops, scen_labels, ws_data
 
 ############################################################################################################
 
@@ -1041,10 +1041,10 @@ def get_probs(pops_dict, dists_dict, all_k, k_iter, scen_labels, ref_scen):
         # remove reference scenario from list of scenarios
         scen_labels1 = scen_labels.copy()
         scen_labels1.pop(scen_labels1.index(ref_scen)) # now remove ref_scen from labels for the next plot
-        probs = {} # prepare dictionaries to store results  
+        probs = {} # prepare dictionaries to store results
         for scen in scen_labels1:
             probs1 = []
-            for k in all_k: 
+            for k in all_k:
                 # get array of random divergences for k sample-size, using KS statistic
                 D_arr = np.array([get_KS(np.random.choice(pops_dict[scen],k), pops_dict[ref_scen]) for i in np.arange(k_iter)])
                 # save fraction of D_arr that is greater than the least significant KSstat for k at 95% confidence
@@ -1101,12 +1101,12 @@ def plot_conf_and_power(prob_dict, all_k, k_iter, ref_scen, dd, pops_1s, pops, s
         ax.set_title('likelihood to reject "'+ref_scen+'" as a function of sample size',
                      fontdict=dict(size=20,weight='bold'), pad=10)
         
-        # get confidence of rejecting reference scenario based on available detrital observations 
+        # get confidence of rejecting reference scenario based on available detrital observations
         for key,item in dd.items():
             # get dissimilarity of several random samples
             D_arr = np.array([get_KS(np.random.choice(pops_1s[key],len(item)),pops[ref_scen]) for i in np.arange(k_iter)])
             # get fraction of random samples of the observed ages (with uncertainty) that is
-            # more dissimilar to the ref_scen than the 95% critical distance for that sample size 
+            # more dissimilar to the ref_scen than the 95% critical distance for that sample size
             conf = D_arr[D_arr>np.sqrt(np.log(2/0.05)/(2*len(item)))].size/k_iter*100
             # plot it
             c1 = next(color)
@@ -1134,7 +1134,7 @@ def plot_conf_and_power(prob_dict, all_k, k_iter, ref_scen, dd, pops_1s, pops, s
 def make_pops_1sigma(dd, n):
     '''
     makes dictionary of detrital populations that account for 1 sigma error,
-    the average analytical uncertainty is applied to alle ages, not to bias with uncertainty-based weighting 
+    the average analytical uncertainty is applied to alle ages, not to bias with uncertainty-based weighting
     
     dd: dictionary of detrital samples
     n: integer, number of normally distributed ages to be drawn for each observed grain-age
@@ -1292,9 +1292,6 @@ def get_diss_matrix(pops_dict):
     for i in np.arange(len(l)):
         for j in np.arange(len(l)):
             diss[i,j] = get_KS(pops_dict[l[i]], pops_dict[l[j]])
-#     for i in np.arange(len(l)):
-#         for j in np.arange(len(l)):
-#             diss[j,i] = diss[i,j] # only half of the matrix counts
     return diss
 
 ############################################################################################################
