@@ -1,12 +1,12 @@
-# **ESD_thermotrace v1.1**
+# **ESD_thermotrace v1.2**
 
-Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A new software to interpret tracer thermochronometry datasets and quantify related confidence levels. V. 1.1. GFZ Data Services. https://doi.org/10.5880/fidgeo.2021.003
+Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A new software to interpret tracer thermochronometry datasets and quantify related confidence levels. V. 1.2. GFZ Data Services. https://doi.org/10.5880/fidgeo.2021.003
 
 
 # **What is ESD_thermotrace?**
 
 A [jupyter notebook](https://jupyter.org/) that helps interpreting detrital tracer thermochronometry datasets and quantifying the statistical confidence of such analysis. it has been developed by A. Madella in the [Earth Surface Dynamics group of the University of Tübingen](https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/geowissenschaften/arbeitsgruppen/mineralogie-geodynamik/forschungsbereich/geologie/earth-system-dynamics-research-group/).
-This is version 1.1 of the code and it was last updated in February 2022.
+This is version 1.2 of the code and it was last updated in February 2022.
 
 
 # **Ok, great, but what *exactly* does it do?**
