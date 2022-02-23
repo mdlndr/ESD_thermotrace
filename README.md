@@ -1,6 +1,6 @@
-# **ESD_thermotrace v1.0**
+# **ESD_thermotrace v1.1**
 
-Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A new software to interpret tracer thermochronometry datasets and quantify related confidence levels. V. 1.0. GFZ Data Services. https://doi.org/10.5880/fidgeo.2021.003
+Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A new software to interpret tracer thermochronometry datasets and quantify related confidence levels. V. 1.1. GFZ Data Services. https://doi.org/10.5880/fidgeo.2021.003
 
 
 # **What is ESD_thermotrace?**
