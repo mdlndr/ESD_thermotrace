@@ -6,7 +6,7 @@ Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A n
 # **What is ESD_thermotrace?**
 
 A [jupyter notebook](https://jupyter.org/) that helps interpreting detrital tracer thermochronometry datasets and quantifying the statistical confidence of such analysis. it has been developed by A. Madella in the [Earth Surface Dynamics group of the University of Tübingen](https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/geowissenschaften/arbeitsgruppen/mineralogie-geodynamik/forschungsbereich/geologie/earth-system-dynamics-research-group/).
-This is version 1.0 of the code and it was last updated in September 2021.
+This is version 1.1 of the code and it was last updated in February 2022.
 
 
 # **Ok, great, but what *exactly* does it do?**
