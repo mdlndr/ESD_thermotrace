@@ -1,6 +1,11 @@
 # **ESD_thermotrace v1.2**
-
+To cite the code:
 Madella, Andrea; Glotzbach, Christoph; Ehlers, Todd (2021): ESD_thermotrace, A new software to interpret tracer thermochronometry datasets and quantify related confidence levels. V. 1.2. GFZ Data Services. https://doi.org/10.5880/fidgeo.2021.003
+
+To cite the accompanying peer-reviewed paper:
+Madella, A., Glotzbach, C., & Ehlers, T. A. (2022). How many grains are needed for quantifying catchment erosion from tracer thermochronology? In Geochronology (Vol. 4, Issue 1, pp. 177–190). Copernicus GmbH. https://doi.org/10.5194/gchron-4-177-2022 
+
+
 
 
 # **What is ESD_thermotrace?**
